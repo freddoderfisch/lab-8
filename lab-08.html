@@ -403,12 +403,36 @@ values:</p>
 ## 17 MinTemp       0.0102 
 ## 18 MaxTemp       0.00867</code></pre>
 <ol style="list-style-type: decimal">
-<li><p>Are there any missing values in our variable of interest
+<li>Are there any missing values in our variable of interest
 <code>RainTomorrow</code>? If so, we filter them out and save the new
-dataset as <code>weather_noNA</code>.</p></li>
-<li><p>Which cities are the ones with more rain days? To do this, let’s
-analyze the <code>RainToday</code> variable.</p></li>
+dataset as <code>weather_noNA</code>.</li>
 </ol>
+<pre class="r"><code>weather_noNA &lt;- weather %&gt;%
+  filter(is.na(RainTomorrow) == FALSE)</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Which cities are the ones with more rain days? To do this, let’s
+analyze the <code>RainToday</code> variable.</li>
+</ol>
+<pre class="r"><code>weather_noNA %&gt;%
+  group_by(Location) %&gt;%
+  filter(RainToday == &quot;Yes&quot;) %&gt;%
+  count(RainToday) %&gt;%
+  arrange(desc(n))</code></pre>
+<pre><code>## # A tibble: 49 × 3
+## # Groups:   Location [49]
+##    Location      RainToday     n
+##    &lt;fct&gt;         &lt;fct&gt;     &lt;int&gt;
+##  1 Portland      Yes        1088
+##  2 Cairns        Yes         941
+##  3 Walpole       Yes         928
+##  4 Dartmoor      Yes         921
+##  5 MountGambier  Yes         919
+##  6 NorfolkIsland Yes         912
+##  7 Albany        Yes         893
+##  8 Witchcliffe   Yes         871
+##  9 Sydney        Yes         866
+## 10 CoffsHarbour  Yes         865
+## # ℹ 39 more rows</code></pre>
 </div>
 <div id="exercise-2-logistic-regression" class="section level1">
 <h1>Exercise 2: Logistic regression</h1>
@@ -416,11 +440,22 @@ analyze the <code>RainToday</code> variable.</p></li>
 <pre class="r"><code>weather_Portland &lt;- weather %&gt;%
   filter(Location == &quot;Portland&quot;)</code></pre>
 <ol style="list-style-type: decimal">
-<li><p>Try to predict <code>RainTomorrow</code> by fitting a linear
+<li>Try to predict <code>RainTomorrow</code> by fitting a linear
 regression using the variable <code>RainToday</code> and print the
-output using <code>tidy()</code>.</p></li>
-<li><p>For each point in our dataset, what are the fitted probabilities
-that tomorrow it’s going to rain?</p></li>
+output using <code>tidy()</code>.</li>
+</ol>
+<pre class="r"><code>Rain_fit &lt;- logistic_reg() %&gt;%
+  set_engine(&quot;glm&quot;) %&gt;%
+  fit(RainTomorrow ~ RainToday, data = weather_Portland)
+tidy(Rain_fit)</code></pre>
+<pre><code>## # A tibble: 2 × 5
+##   term         estimate std.error statistic  p.value
+##   &lt;chr&gt;           &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+## 1 (Intercept)     -1.08    0.0527     -20.4 1.51e-92
+## 2 RainTodayYes     1.33    0.0807      16.5 4.39e-61</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>For each point in our dataset, what are the fitted probabilities
+that tomorrow it’s going to rain?</li>
 </ol>
 <ul>
 <li>Plot them using an appropriate visualization. What is peculiar about

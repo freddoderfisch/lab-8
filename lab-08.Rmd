@@ -46,13 +46,18 @@ weather %>%
 1. Are there any missing values in our variable of interest `RainTomorrow`? If so, we filter them out and save the new dataset as `weather_noNA`. 
 
 ```{r}
-
+weather_noNA <- weather %>%
+  filter(is.na(RainTomorrow) == FALSE)
 ```
 
 2. Which cities are the ones with more rain days? To do this, let's analyze the `RainToday` variable. 
 
 ```{r}
-
+weather_noNA %>%
+  group_by(Location) %>%
+  filter(RainToday == "Yes") %>%
+  count(RainToday) %>%
+  arrange(desc(n))
 ```
 
 # Exercise 2: Logistic regression
@@ -67,7 +72,10 @@ weather_Portland <- weather %>%
 1. Try to predict `RainTomorrow` by fitting a linear regression using the variable `RainToday` and print the output using `tidy()`.
 
 ```{r}
-
+Rain_fit <- logistic_reg() %>%
+  set_engine("glm") %>%
+  fit(RainTomorrow ~ RainToday, data = weather_Portland)
+tidy(Rain_fit)
 ```
 
 2. For each point in our dataset, what are the fitted probabilities that tomorrow it's going to rain? 

@@ -83,7 +83,15 @@ tidy(Rain_fit)
 - Plot them using an appropriate visualization. What is peculiar about them?
 
 ```{r}
-
+Rain_prob <- weather_Portland %>%
+  mutate(
+    "Rain_prob" = 1.331284*as.numeric(RainToday)-1.076234
+  )
+Rain_prob %>%
+  ggplot(mapping = aes(x = Rain_prob)) + geom_histogram() + labs(
+    title = "Fitted Probabilities",
+    x = "Probability of it Raining Tomorrow"
+  )
 ```
 
 > Hint: how many unique values do the predicted probabilities take? What do these value correspond to?
